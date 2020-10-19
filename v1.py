@@ -3,7 +3,7 @@ import numpy as np
 
 
 def isSatisfiedNum(x) -> bool:
-    value = re.compile(r'^[-+]?[0-9]+\.[0-9]+$')
+    value = re.compile(r'[0-9]+(\.)?[0-9]*')
     isnumber =  value.match(x)
     
     if isnumber:
@@ -19,23 +19,25 @@ if __name__ == '__main__':
     N = int(input())
     print("请玩家依次输入一个0~100的有理数")
     
-    i, inputs, grades = 1, [], [0 for i in range(N)]
+    i, inputs, grades = 1, [], np.zeros(N)
     while (i <= N):
-        print("玩家" + str(i+1) + "：", end='')
+        print("玩家%3d：" % i, end='')
         number = input()
-        if isSatisfiedNum(number):
+        
+        if not isSatisfiedNum(number):
             print("请输入0~100的有理数！")
         else:
             number = float(number)
             i += 1
-        inputs.append(number)
+            inputs.append(number)
     
     G = sum(inputs) / N * GOLDEN
     bias = np.abs(np.array(inputs) - G)
-    grades[bias.argmin()] = N
-    grades[bias.argmax()] = -2
+    
+    grades[bias == np.max(bias)] = -2
+    grades[bias == np.min(bias)] = N
     
     print("本轮各位玩家的得分如下：")
     for i in range(N):
-        print("玩家" + str(i+1) + "：", end='')
-        print("【" + str(grades[i]) + "】分")
+        print("玩家%3d：" % (i+1), end='')
+        print("【%3d】分" % grades[i])
